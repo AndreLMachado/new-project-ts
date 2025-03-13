@@ -1,0 +1,16 @@
+{
+  "todos": [
+    {
+      "id": "8c29",
+      "task": "Estudar TypeScript"
+    },
+    {
+      "id": "3ae8",
+      "task": "Estudar React"
+    },
+    {
+      "id": "9fc7",
+      "task": "Estudar NextJS"
+    }
+  ]
+}
