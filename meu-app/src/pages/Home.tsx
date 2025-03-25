@@ -1,63 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import TodoList from '../components/TodoList';
-
-const API_URL = 'http://localhost:5000/todos';
+import { useEffect, useState } from "react";
+import { getTasks } from "../services/taskService"; // Importando a função do serviço
+import TodoList from "../components/TodoList/TodoList";
+import { Link } from "react-router-dom";
 
 interface Todo {
-  id: number;
+  id: string;
   task: string;
 }
 
-const Home: React.FC = () => {
-  const [task, setTask] = useState<string>('');
-  const [todos, setTodos] = useState<Todo[]>([]);
+const Home = () => {
+  const [todos, setTodos] = useState<Todo[]>([]); // Lista de tarefas
+  const [error, setError] = useState<string | null>(null); // Armazenar erro caso ocorra
 
-  // Carregar tarefas do db.json na inicialização
+  // Função para buscar as tarefas do banco de dados
   useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => setTodos(data))
-      .catch((err) => console.error('Erro ao buscar tarefas:', err));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const tasks = await getTasks(); 
+        setTodos(tasks); // Atualiza o estado corretamente
+      } catch (err) {
+        setError("Erro ao carregar tarefas");
+      }
+    };
 
-  // Adicionar nova tarefa ao db.json
-  const handleAddTask = () => {
-    if (task.trim()) {
-      const newTask = { task };
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newTask),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setTodos([...todos, data]); // Adiciona a nova tarefa ao estado
-          setTask('');
-        })
-        .catch((err) => console.error('Erro ao adicionar tarefa:', err));
+    fetchData(); // Chama a função de carregamento das tarefas
+  }, []); // Executa apenas uma vez quando o componente é montado
+
+  // Função para excluir uma tarefa
+  const handleDeleteTask = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/todos/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao excluir tarefa");
+      }
+
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id)); // Atualiza o estado após a exclusão
+    } catch (err) {
+      setError("Erro ao excluir tarefa");
     }
   };
 
-  // Excluir tarefa do db.json
-  const handleDeleteTask = (id: number) => {
-    fetch(`${API_URL}/${id}`, { method: 'DELETE' })
-      .then(() => {
-        setTodos(todos.filter((todo) => todo.id !== id)); // Remove a tarefa do estado
-      })
-      .catch((err) => console.error('Erro ao excluir tarefa:', err));
-  };
-
   return (
-    <div className="page">
+    <div>
       <h1>Lista de Tarefas</h1>
-      <input
-        type="text"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-        placeholder="Adicionar nova tarefa"
-      />
-      <button onClick={handleAddTask}>Adicionar</button>
-      <TodoList todos={todos} onDelete={handleDeleteTask} />
+      {error && <p style={{ color: "red" }}>{error}</p>} {/* Exibe erro caso ocorra */}
+      <TodoList todos={todos} onDelete={handleDeleteTask} /> {/* Passa a lista de tarefas para o componente TodoList */}
+      <Link to="http://localhost:3000/">Adicionar nova tarefa</Link>
     </div>
   );
 };
