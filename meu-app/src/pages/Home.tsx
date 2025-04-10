@@ -3,6 +3,8 @@ import { getTasks } from "../services/taskService"; // Importando a função do 
 import TodoList from "../components/TodoList/TodoList";
 import { Link } from "react-router-dom";
 
+import { DivContainer } from "./pages.styles";
+
 interface Todo {
   id: string;
   task: string;
@@ -44,12 +46,12 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <DivContainer>
       <h1>Lista de Tarefas</h1>
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Exibe erro caso ocorra */}
       <TodoList todos={todos} onDelete={handleDeleteTask} /> {/* Passa a lista de tarefas para o componente TodoList */}
       <Link to="http://localhost:3000/">Adicionar nova tarefa</Link>
-    </div>
+    </DivContainer>
   );
 };
 

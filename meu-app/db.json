@@ -11,6 +11,18 @@
     {
       "id": "9fc7",
       "task": "Estudar NextJS"
+    },
+    {
+      "id": "98a5",
+      "task": "Fazer um projeto"
+    },
+    {
+      "id": "7340",
+      "task": "Incluir um CRUD no projeto"
+    },
+    {
+      "id": "b89c",
+      "task": "Incluir rotas diferentes no projeto"
     }
   ]
 }
